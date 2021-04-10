@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class Tanque {
+public class Tanque{
 
     private ArrayList<JPanel> tanque;
     private int ancla;
+    private JPanel proyectil;
+    private Direccion orientacion;
 
     public ArrayList<JPanel> getTanque() {
         return tanque;
@@ -109,6 +111,7 @@ public class Tanque {
     }
 
     public void dibujarTanqueV2(Direccion direccion, JPanel regilla) {
+        this.orientacion = direccion;
         desColorarDondeElTanqueEstuvo();
         ArrayList<JPanel> tankPartes = new ArrayList<JPanel>();
         int puntosAncla = mover(direccion); // Aqui movemos el tanque
@@ -127,6 +130,7 @@ public class Tanque {
             System.out.println("Mover a la derecha");
             tankPartes.add((JPanel) regilla.getComponent(puntosAux + 2));
             tankPartes.add((JPanel) regilla.getComponent(puntosAux + 3));
+            proyectil = (JPanel) regilla.getComponent(puntosAux + 4);
 
         } else if (direccion == Direccion.Izquierda) {
             System.out.println("Mover a la Izquierda");
@@ -136,6 +140,7 @@ public class Tanque {
             System.out.println("Mover a la Arriba");
             tankPartes.add((JPanel) regilla.getComponent(puntosAux - 82));
             tankPartes.add((JPanel) regilla.getComponent(puntosAux - 123));
+            proyectil = (JPanel) regilla.getComponent(puntosAux - 123);
 
         } else if (direccion == Direccion.Abajo) {
             System.out.println("Mover a la Abajo");
@@ -180,6 +185,21 @@ public class Tanque {
                 }
             }
         }
+    }
+    
+
+    public void disparar() {
+        System.out.println("Vamos a disparar WE");
+        while (true) {
+            try {
+                proyectil.setBackground(Color.BLUE);
+                Thread.sleep(1000);
+                proyectil.setBackground(Color.GRAY);
+            } catch (InterruptedException e) {
+                System.out.println("Thread Interrupted");
+            }
+        }
+
     }
 
 }

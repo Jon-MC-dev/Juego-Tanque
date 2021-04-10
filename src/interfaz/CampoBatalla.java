@@ -28,7 +28,7 @@ public class CampoBatalla extends JFrame {
             panelGen = new JPanel();
             panelGen.setBackground(Color.GRAY);
             if (i <= 1000) {
-                panelGen.add(new JLabel("" + i));
+                //panelGen.add(new JLabel("" + i));
             }
             panelGen.addMouseListener(new MouseAdapter() {
                 public void mouseEntered(MouseEvent arg0) {
@@ -43,7 +43,7 @@ public class CampoBatalla extends JFrame {
         }
         this.setLayout(new BorderLayout());
         this.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
                 if (evt.getKeyCode() == KeyEvent.VK_RIGHT) {
                     tanque.dibujarTanqueV2(Direccion.Derecha, regilla);
                 } else if (evt.getKeyCode() == KeyEvent.VK_LEFT) {
@@ -54,13 +54,19 @@ public class CampoBatalla extends JFrame {
                     tanque.dibujarTanqueV2(Direccion.Abajo, regilla);
                 }
             }
+            
+            public void keyReleased(java.awt.event.KeyEvent evt){
+                if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+                    tanque.disparar();
+                }
+            }
         });
         System.out.println("Numero de componentes " + regilla.getComponentCount());
         this.getContentPane().add(regilla, BorderLayout.CENTER);
         this.setSize(500, 500);
 
-        tanque.setAncla(499);
-        tanque.dibujarTanqueV2(Direccion.Derecha, regilla);
+        tanque.setAncla(1495);
+        tanque.dibujarTanqueV2(Direccion.Arriba, regilla);
     }
 
 }
