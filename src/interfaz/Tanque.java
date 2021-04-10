@@ -108,29 +108,76 @@ public class Tanque {
 
     }
 
-    public void dibujarTanqueV2(int putoReferencia, Direccion direccion, JPanel regilla) {
+    public void dibujarTanqueV2(Direccion direccion, JPanel regilla) {
         desColorarDondeElTanqueEstuvo();
         ArrayList<JPanel> tankPartes = new ArrayList<JPanel>();
-        int puntosAncla = putoReferencia;
-        int puntosAux = putoReferencia;
+        int puntosAncla = mover(direccion); // Aqui movemos el tanque
+        System.out.println("Punto ancla " + puntosAncla);
+        int puntosAux = puntosAncla;
+        tankPartes.add((JPanel) regilla.getComponent(puntosAux - 42));
+        tankPartes.add((JPanel) regilla.getComponent(puntosAux - 41));
+        tankPartes.add((JPanel) regilla.getComponent(puntosAux - 40));
+        tankPartes.add((JPanel) regilla.getComponent(puntosAux - 1));
+        tankPartes.add((JPanel) regilla.getComponent(puntosAux));
+        tankPartes.add((JPanel) regilla.getComponent(puntosAux + 1));
+        tankPartes.add((JPanel) regilla.getComponent(puntosAux + 40));
+        tankPartes.add((JPanel) regilla.getComponent(puntosAux + 41));
+        tankPartes.add((JPanel) regilla.getComponent(puntosAux + 42));
         if (direccion == Direccion.Derecha) {
+            System.out.println("Mover a la derecha");
+            tankPartes.add((JPanel) regilla.getComponent(puntosAux + 2));
+            tankPartes.add((JPanel) regilla.getComponent(puntosAux + 3));
 
         } else if (direccion == Direccion.Izquierda) {
-
+            System.out.println("Mover a la Izquierda");
+            tankPartes.add((JPanel) regilla.getComponent(puntosAux - 2));
+            tankPartes.add((JPanel) regilla.getComponent(puntosAux - 3));
         } else if (direccion == Direccion.Arriba) {
+            System.out.println("Mover a la Arriba");
+            tankPartes.add((JPanel) regilla.getComponent(puntosAux - 82));
+            tankPartes.add((JPanel) regilla.getComponent(puntosAux - 123));
 
         } else if (direccion == Direccion.Abajo) {
+            System.out.println("Mover a la Abajo");
+            tankPartes.add((JPanel) regilla.getComponent(puntosAux + 82));
+            tankPartes.add((JPanel) regilla.getComponent(puntosAux + 123));
 
         }
         this.setTanque(tankPartes);
+        this.colorearTanque();
         this.setAncla(puntosAncla);
 
+    }
+
+    public int mover(Direccion direccion) {
+        int puntosAlMover = 0;
+        if (direccion == Direccion.Derecha) {
+            puntosAlMover = this.ancla + 1;
+        } else if (direccion == Direccion.Izquierda) {
+            puntosAlMover = this.ancla - 1;
+        } else if (direccion == Direccion.Arriba) {
+            puntosAlMover = this.ancla - 41;
+        } else if (direccion == Direccion.Abajo) {
+            puntosAlMover = this.ancla + 41;
+        }
+        return puntosAlMover;
     }
 
     public void desColorarDondeElTanqueEstuvo() {
         if (tanque != null) {
             for (int i = 0; i < tanque.size(); i++) {
                 tanque.get(i).setBackground(Color.GRAY);
+            }
+        }
+    }
+
+    public void colorearTanque() {
+        if (tanque != null) {
+            for (int i = 0; i < tanque.size(); i++) {
+                tanque.get(i).setBackground(Color.BLACK);
+                if (4 == i) {
+                    tanque.get(i).setBackground(Color.RED);
+                }
             }
         }
     }
