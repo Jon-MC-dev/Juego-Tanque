@@ -8,7 +8,7 @@ public class App {
     public static void main(String[] args) {
         CampoBatalla campo = new CampoBatalla();
         campo.setVisible(true);
-        campo.dibujarTanque(500, Direccion.Derecha);
+        //campo.tanque.dibujarTanque(500, Direccion.Derecha, campo.regilla);
     }
 
 }
