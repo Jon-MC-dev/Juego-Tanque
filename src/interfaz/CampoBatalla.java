@@ -15,11 +15,11 @@ import javax.swing.JPanel;
 
 public class CampoBatalla extends JFrame {
 
-    Tanque tanque;
-    public JPanel regilla;
+    private Tanque tanque;
+    private JPanel regilla;
 
-    public CampoBatalla() {
-        tanque = new Tanque();
+    public CampoBatalla(Tanque tanque) {
+        this.tanque = tanque;
 
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.regilla = new JPanel(new GridLayout(41, 41, 1, 1));
@@ -57,7 +57,7 @@ public class CampoBatalla extends JFrame {
             
             public void keyReleased(java.awt.event.KeyEvent evt){
                 if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-                    tanque.disparar();
+                    tanque.dispararProyectil();
                 }
             }
         });

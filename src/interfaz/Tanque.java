@@ -5,12 +5,22 @@ import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class Tanque{
+public class Tanque implements Runnable {
 
+    private boolean disparando = false;
     private ArrayList<JPanel> tanque;
     private int ancla;
-    private JPanel proyectil;
-    private Direccion orientacion;
+    private ArrayList<Proyectil> posicionesProyectiles = new ArrayList<Proyectil>();
+    private JPanel campoBatalla;
+    private Proyectil ultimoProyectil;
+
+    public Tanque() {
+
+    }
+
+    public Tanque(JPanel campo) {
+        this.campoBatalla = campo;
+    }
 
     public ArrayList<JPanel> getTanque() {
         return tanque;
@@ -28,93 +38,11 @@ public class Tanque{
         this.ancla = ancla;
     }
 
-    public void dibujarTanque(int putoReferencia, Direccion direccion, JPanel regilla) {
-        desColorarDondeElTanqueEstuvo();
-        ArrayList<JPanel> tankPartes = new ArrayList<JPanel>();
-        int puntosAncla = putoReferencia;
-        int puntosAux = putoReferencia;
-        if (direccion == Direccion.Derecha) {
-            for (int i = 1; i <= 11; i++) {
-                JPanel tankPart = (JPanel) regilla.getComponent(puntosAux);
-                tankPart.setBackground(Color.BLACK);
-                tankPartes.add(tankPart);
-                if (puntosAncla + 2 == puntosAux) {
-                    puntosAux += 39;
-                } else if (puntosAncla + 45 == puntosAux) {
-                    puntosAux += 37;
-                } else {
-                    puntosAux += 1;
-                }
-            }
-        } else if (direccion == Direccion.Izquierda) {
-            System.out.println("Dibijando a la izquierda");
-            for (int i = 1; i <= 11; i++) {
-                if (puntosAux != 0) {
-                    JPanel tankPart = (JPanel) regilla.getComponent(puntosAux);
-                    tankPart.setBackground(Color.BLACK);
-                    tankPartes.add(tankPart);
-                    if (puntosAncla + 2 == puntosAux) {
-                        puntosAux += 37;
-                    } else if (puntosAncla + 43 == puntosAux) {
-                        puntosAux += 39;
-                    } else {
-                        puntosAux += 1;
-                    }
-                }
-            }
-        } else if (direccion == Direccion.Arriba) {
-            System.out.println("Dibijando a la Arriba");
-            for (int i = 1; i <= 11; i++) {
-                if (puntosAux != 0) {
-                    JPanel tankPart = (JPanel) regilla.getComponent(puntosAux);
-                    tankPart.setBackground(Color.BLACK);
-                    tankPartes.add(tankPart);
-                    //System.out.println("Punto[" + i + "]: puntosAncla [" + puntosAncla + "], puntosAux [" + puntosAux + "] DIFERENCIA [" + (puntosAncla - puntosAux) + "]");
-                    if (puntosAncla + 2 == puntosAux) {
-                        puntosAux -= 43;
-                    } else if (puntosAncla - 39 == puntosAux) {
-                        puntosAux -= 43;
-                    } else if (puntosAncla - 80 == puntosAux) {
-                        puntosAux -= 42;
-                    } else if (puntosAncla - 122 == puntosAux) {
-                        puntosAux -= 41;
-                    } else {
-                        puntosAux += 1;
-                    }
-                }
-            }
-        } else if (direccion == Direccion.Abajo) {
-            System.out.println("Dibijando a la Abajo");
-            for (int i = 1; i <= 11; i++) {
-                if (puntosAux != 0) {
-                    JPanel tankPart = (JPanel) regilla.getComponent(puntosAux);
-                    tankPart.setBackground(Color.BLACK);
-                    tankPartes.add(tankPart);
-                    //System.out.println("Punto[" + i + "]: puntosAux [" + puntosAux + "], puntosAncla [" + puntosAncla + "] DIFERENCIA [" + (puntosAux - puntosAncla) + "]");
-                    if (puntosAncla + 2 == puntosAux) {
-                        puntosAux += 39;
-                    } else if (puntosAncla + 43 == puntosAux) {
-                        puntosAux += 39;
-                    } else if (puntosAncla + 84 == puntosAux) {
-                        puntosAux += 40;
-                    } else if (puntosAncla + 124 == puntosAux) {
-                        puntosAux += 41;
-                    } else {
-                        puntosAux += 1;
-                    }
-                }
-            }
-        }
-        this.setTanque(tankPartes);
-        this.setAncla(puntosAncla);
-
-    }
-
     public void dibujarTanqueV2(Direccion direccion, JPanel regilla) {
-        this.orientacion = direccion;
+        this.campoBatalla = regilla;
         desColorarDondeElTanqueEstuvo();
         ArrayList<JPanel> tankPartes = new ArrayList<JPanel>();
-        int puntosAncla = mover(direccion); // Aqui movemos el tanque
+        int puntosAncla = mover(direccion, this.ancla); // Aqui movemos el tanque
         System.out.println("Punto ancla " + puntosAncla);
         int puntosAux = puntosAncla;
         tankPartes.add((JPanel) regilla.getComponent(puntosAux - 42));
@@ -130,7 +58,7 @@ public class Tanque{
             System.out.println("Mover a la derecha");
             tankPartes.add((JPanel) regilla.getComponent(puntosAux + 2));
             tankPartes.add((JPanel) regilla.getComponent(puntosAux + 3));
-            proyectil = (JPanel) regilla.getComponent(puntosAux + 4);
+            //proyectilPosicion = (JPanel) regilla.getComponent(puntosAux + 4);
 
         } else if (direccion == Direccion.Izquierda) {
             System.out.println("Mover a la Izquierda");
@@ -140,7 +68,8 @@ public class Tanque{
             System.out.println("Mover a la Arriba");
             tankPartes.add((JPanel) regilla.getComponent(puntosAux - 82));
             tankPartes.add((JPanel) regilla.getComponent(puntosAux - 123));
-            proyectil = (JPanel) regilla.getComponent(puntosAux - 123);
+            ultimoProyectil = new Proyectil(puntosAux - 164, false, direccion);
+            posicionesProyectiles.add(ultimoProyectil);
 
         } else if (direccion == Direccion.Abajo) {
             System.out.println("Mover a la Abajo");
@@ -154,17 +83,18 @@ public class Tanque{
 
     }
 
-    public int mover(Direccion direccion) {
+    private int mover(Direccion direccion, int puntoActual) {
         int puntosAlMover = 0;
         if (direccion == Direccion.Derecha) {
-            puntosAlMover = this.ancla + 1;
+            puntosAlMover = puntoActual + 1;
         } else if (direccion == Direccion.Izquierda) {
-            puntosAlMover = this.ancla - 1;
+            puntosAlMover = puntoActual - 1;
         } else if (direccion == Direccion.Arriba) {
-            puntosAlMover = this.ancla - 41;
+            puntosAlMover = puntoActual - 41;
         } else if (direccion == Direccion.Abajo) {
-            puntosAlMover = this.ancla + 41;
+            puntosAlMover = puntoActual + 41;
         }
+        System.out.println("La direccion es: " + direccion);
         return puntosAlMover;
     }
 
@@ -186,15 +116,34 @@ public class Tanque{
             }
         }
     }
-    
 
-    public void disparar() {
-        System.out.println("Vamos a disparar WE");
+    public void dispararProyectil() {
+        ultimoProyectil.disparar();
+        System.out.println("El ultimo proyectil se disparo ");
+    }
+
+    @Override
+    public void run() {
+        System.out.println("Inicio del hilo");
         while (true) {
             try {
-                proyectil.setBackground(Color.BLUE);
-                Thread.sleep(1000);
-                proyectil.setBackground(Color.GRAY);
+                Thread.sleep(100);
+
+                for (int i = 0; i < posicionesProyectiles.size(); i++) {
+                    Proyectil proyectil = posicionesProyectiles.get(i);
+                    if (proyectil.haSidoDisparado()) {
+                        try {
+                            JPanel proyectilP = (JPanel) campoBatalla.getComponent(proyectil.getPuntoDeDisparo());
+                            proyectilP.setBackground(Color.BLUE);
+                            Thread.sleep(100);
+                            proyectilP.setBackground(Color.GRAY);
+                            proyectil.setPuntoDeDisparo(mover(proyectil.getDireccionDisparo(), proyectil.getPuntoDeDisparo()));
+                        } catch (java.lang.ArrayIndexOutOfBoundsException e) {
+                            System.out.println("Un proyectil se perdio en el vacio");
+                            posicionesProyectiles.remove(proyectil);
+                        }
+                    }
+                }
             } catch (InterruptedException e) {
                 System.out.println("Thread Interrupted");
             }
