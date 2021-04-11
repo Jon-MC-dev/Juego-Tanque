@@ -24,11 +24,16 @@ public class CampoBatalla extends JFrame {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.regilla = new JPanel(new GridLayout(41, 41, 1, 1));
         JPanel panelGen;
+        int paso = 0;
         for (int i = 0; i < 1681; i++) {
             panelGen = new JPanel();
             panelGen.setBackground(Color.GRAY);
             if (i <= 1000) {
                 panelGen.add(new JLabel("" + i));
+            }
+            if (i % 41 == 0 || i * 2 + paso % 41 == 0) {
+                panelGen.setBackground(Color.BLUE);
+                paso++;
             }
             panelGen.addMouseListener(new MouseAdapter() {
                 public void mouseEntered(MouseEvent arg0) {
@@ -45,18 +50,19 @@ public class CampoBatalla extends JFrame {
         this.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 if (evt.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    tanque.dibujarTanqueV2(Direccion.Derecha, regilla);
+                    tanque.dibujarTanqueV2(Direccion.Derecha, regilla, true);
                 } else if (evt.getKeyCode() == KeyEvent.VK_LEFT) {
-                    tanque.dibujarTanqueV2(Direccion.Izquierda, regilla);
+                    tanque.dibujarTanqueV2(Direccion.Izquierda, regilla, true);
                 } else if (evt.getKeyCode() == KeyEvent.VK_UP) {
-                    tanque.dibujarTanqueV2(Direccion.Arriba, regilla);
+                    tanque.dibujarTanqueV2(Direccion.Arriba, regilla, true);
                 } else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
-                    tanque.dibujarTanqueV2(Direccion.Abajo, regilla);
+                    tanque.dibujarTanqueV2(Direccion.Abajo, regilla, true);
                 }
             }
-            
-            public void keyReleased(java.awt.event.KeyEvent evt){
+
+            public void keyReleased(java.awt.event.KeyEvent evt) {
                 if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+                    tanque.dibujarTanqueV2(tanque.getDireccionCanon(), regilla, false);
                     tanque.dispararProyectil();
                 }
             }
@@ -65,8 +71,8 @@ public class CampoBatalla extends JFrame {
         this.getContentPane().add(regilla, BorderLayout.CENTER);
         this.setSize(500, 500);
 
-        tanque.setAncla(500);
-        tanque.dibujarTanqueV2(Direccion.Arriba, regilla);
+        tanque.setAncla(800);
+        tanque.dibujarTanqueV2(Direccion.Arriba, regilla, false);
     }
 
 }

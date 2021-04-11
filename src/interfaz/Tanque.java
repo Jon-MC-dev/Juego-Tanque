@@ -7,12 +7,12 @@ import javax.swing.JPanel;
 
 public class Tanque implements Runnable {
 
-    private boolean disparando = false;
     private ArrayList<JPanel> tanque;
     private int ancla;
     private ArrayList<Proyectil> posicionesProyectiles = new ArrayList<Proyectil>();
     private JPanel campoBatalla;
     private Proyectil ultimoProyectil;
+    private Direccion direccionCanon;
 
     public Tanque() {
 
@@ -38,11 +38,15 @@ public class Tanque implements Runnable {
         this.ancla = ancla;
     }
 
-    public void dibujarTanqueV2(Direccion direccion, JPanel regilla) {
+    public void dibujarTanqueV2(Direccion direccion, JPanel regilla, boolean mover) {
         this.campoBatalla = regilla;
+        this.direccionCanon = direccion;
         desColorarDondeElTanqueEstuvo();
         ArrayList<JPanel> tankPartes = new ArrayList<JPanel>();
-        int puntosAncla = mover(direccion, this.ancla); // Aqui movemos el tanque
+        int puntosAncla = this.ancla;
+        if (mover) {
+            puntosAncla = mover(direccion, this.ancla); // Aqui movemos el tanque
+        }
         System.out.println("Punto ancla " + puntosAncla);
         int puntosAux = puntosAncla;
         tankPartes.add((JPanel) regilla.getComponent(puntosAux - 42));
@@ -58,27 +62,24 @@ public class Tanque implements Runnable {
             System.out.println("Mover a la derecha");
             tankPartes.add((JPanel) regilla.getComponent(puntosAux + 2));
             tankPartes.add((JPanel) regilla.getComponent(puntosAux + 3));
-            ultimoProyectil = new Proyectil(puntosAux + 4, false, direccion);
+            //ultimoProyectil = new Proyectil(puntosAux + 4, false, direccion);
 
         } else if (direccion == Direccion.Izquierda) {
             System.out.println("Mover a la Izquierda");
             tankPartes.add((JPanel) regilla.getComponent(puntosAux - 2));
             tankPartes.add((JPanel) regilla.getComponent(puntosAux - 3));
-            ultimoProyectil = new Proyectil(puntosAux - 4, false, direccion);
+            //ultimoProyectil = new Proyectil(puntosAux - 4, false, direccion);
 
         } else if (direccion == Direccion.Arriba) {
             System.out.println("Mover a la Arriba");
             tankPartes.add((JPanel) regilla.getComponent(puntosAux - 82));
             tankPartes.add((JPanel) regilla.getComponent(puntosAux - 123));
-            ultimoProyectil = new Proyectil(puntosAux - 164, false, direccion);
+            //ultimoProyectil = new Proyectil(puntosAux - 164, false, direccion);
         } else if (direccion == Direccion.Abajo) {
             System.out.println("Mover a la Abajo");
             tankPartes.add((JPanel) regilla.getComponent(puntosAux + 82));
             tankPartes.add((JPanel) regilla.getComponent(puntosAux + 123));
-            ultimoProyectil = new Proyectil(puntosAux + 164, false, direccion);
-        }
-        if (posicionesProyectiles.size() <= 3) {
-            posicionesProyectiles.add(ultimoProyectil);
+            //ultimoProyectil = new Proyectil(puntosAux + 164, false, direccion);
         }
 
         this.setTanque(tankPartes);
@@ -98,7 +99,6 @@ public class Tanque implements Runnable {
         } else if (direccion == Direccion.Abajo) {
             puntosAlMover = puntoActual + 41;
         }
-        System.out.println("La direccion es: " + direccion);
         return puntosAlMover;
     }
 
@@ -122,8 +122,29 @@ public class Tanque implements Runnable {
     }
 
     public void dispararProyectil() {
-        ultimoProyectil.disparar();
-        System.out.println("El ultimo proyectil se disparo ");
+        Proyectil proyectil = null;
+        if (Direccion.Derecha == direccionCanon) {
+            ultimoProyectil = new Proyectil(this.ancla + 4, false, direccionCanon);
+        } else if (Direccion.Izquierda == direccionCanon) {
+            ultimoProyectil = new Proyectil(this.ancla - 4, false, direccionCanon);
+        } else if (Direccion.Arriba == direccionCanon) {
+            ultimoProyectil = new Proyectil(this.ancla - 164, false, direccionCanon);
+        } else if (Direccion.Abajo == direccionCanon) {
+            ultimoProyectil = new Proyectil(this.ancla + 164, false, direccionCanon);
+        }
+
+        if (posicionesProyectiles.size() <= 3) {
+            posicionesProyectiles.add(ultimoProyectil);
+        }
+        // # 
+        for (int i = 0; i < posicionesProyectiles.size() && proyectil == null; i++) {
+            if (!posicionesProyectiles.get(i).haSidoDisparado()) {
+                proyectil = posicionesProyectiles.get(i);
+            }
+        }
+        if (proyectil != null) {
+            proyectil.disparar();
+        }
     }
 
     @Override
@@ -131,16 +152,28 @@ public class Tanque implements Runnable {
         System.out.println("Inicio del hilo");
         while (true) {
             try {
-                Thread.sleep(50);
-                System.out.println("Actualmente hay "+posicionesProyectiles.size()+" proyectiles");
-
+                System.out.println("Actualmente hay " + posicionesProyectiles.size() + " proyectiles");
+                Thread.sleep(100);
+                // For para encender los proyectiles
                 for (int i = 0; i < posicionesProyectiles.size(); i++) {
                     Proyectil proyectil = posicionesProyectiles.get(i);
                     if (proyectil.haSidoDisparado()) {
                         try {
                             JPanel proyectilP = (JPanel) campoBatalla.getComponent(proyectil.getPuntoDeDisparo());
                             proyectilP.setBackground(Color.BLACK);
-                            Thread.sleep(50);
+                        } catch (java.lang.ArrayIndexOutOfBoundsException e) {
+                            System.out.println("Un proyectil se perdio en el vacio");
+                            posicionesProyectiles.remove(proyectil);
+                        }
+                    }
+                }
+                Thread.sleep(100);
+                // For para apagar los proyectiles
+                for (int i = 0; i < posicionesProyectiles.size(); i++) {
+                    Proyectil proyectil = posicionesProyectiles.get(i);
+                    if (proyectil.haSidoDisparado()) {
+                        try {
+                            JPanel proyectilP = (JPanel) campoBatalla.getComponent(proyectil.getPuntoDeDisparo());
                             proyectilP.setBackground(Color.GRAY);
                             proyectil.setPuntoDeDisparo(mover(proyectil.getDireccionDisparo(), proyectil.getPuntoDeDisparo()));
                         } catch (java.lang.ArrayIndexOutOfBoundsException e) {
@@ -155,6 +188,10 @@ public class Tanque implements Runnable {
             }
         }
 
+    }
+
+    public Direccion getDireccionCanon() {
+        return direccionCanon;
     }
 
 }
