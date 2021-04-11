@@ -17,13 +17,15 @@ public class CampoBatalla extends JFrame {
 
     private Tanque tanque;
     private JPanel regilla;
+    private ArrayList<JPanel> limitesLaterales;
 
     public CampoBatalla(Tanque tanque) {
         this.tanque = tanque;
-
+        this.limitesLaterales = new ArrayList<JPanel>();
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.regilla = new JPanel(new GridLayout(41, 41, 1, 1));
         JPanel panelGen;
+
         int paso = 0;
         for (int i = 0; i < 1681; i++) {
             panelGen = new JPanel();
@@ -31,9 +33,14 @@ public class CampoBatalla extends JFrame {
             if (i <= 1000) {
                 panelGen.add(new JLabel("" + i));
             }
-            if (i % 41 == 0 || i * 2 + paso % 41 == 0) {
+            if (i % 41 == 0) {
                 panelGen.setBackground(Color.BLUE);
-                paso++;
+                paso = i + 40;
+                limitesLaterales.add(panelGen);
+            }
+            if (i == paso) {
+                panelGen.setBackground(Color.RED);
+                limitesLaterales.add(panelGen);
             }
             panelGen.addMouseListener(new MouseAdapter() {
                 public void mouseEntered(MouseEvent arg0) {
@@ -72,6 +79,7 @@ public class CampoBatalla extends JFrame {
         this.setSize(500, 500);
 
         tanque.setAncla(800);
+        tanque.setLimitesLaterales(limitesLaterales);
         tanque.dibujarTanqueV2(Direccion.Arriba, regilla, false);
     }
 

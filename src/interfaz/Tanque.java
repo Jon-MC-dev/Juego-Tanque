@@ -13,6 +13,7 @@ public class Tanque implements Runnable {
     private JPanel campoBatalla;
     private Proyectil ultimoProyectil;
     private Direccion direccionCanon;
+    private ArrayList<JPanel> limitesLaterales;
 
     public Tanque() {
 
@@ -99,7 +100,24 @@ public class Tanque implements Runnable {
         } else if (direccion == Direccion.Abajo) {
             puntosAlMover = puntoActual + 41;
         }
+        if (machLimitesAlMoverTanque(puntosAlMover)) {
+            puntosAlMover = puntoActual;
+        }
         return puntosAlMover;
+    }
+
+    private boolean machLimitesAlMoverTanque(int puntoPretendido) {
+        boolean hayMach = false;
+        System.out.println("Punto pretendido [" + puntoPretendido + "]");
+        System.out.println("Cantidad de puntos limite " + limitesLaterales.size());
+        for (int i = 0; i < limitesLaterales.size(); i++) {
+            if (limitesLaterales.get(i).hashCode() == tanque.get(10).hashCode()) {
+                System.out.println("A la derecha ya no deveria pasar");
+                hayMach = true;
+            }
+
+        }
+        return hayMach;
     }
 
     public void desColorarDondeElTanqueEstuvo() {
@@ -116,6 +134,10 @@ public class Tanque implements Runnable {
                 tanque.get(i).setBackground(Color.BLACK);
                 if (4 == i) {
                     tanque.get(i).setBackground(Color.RED);
+                }
+                if (10 == i) {
+                    tanque.get(i).setBackground(Color.DARK_GRAY);
+
                 }
             }
         }
@@ -150,10 +172,11 @@ public class Tanque implements Runnable {
     @Override
     public void run() {
         System.out.println("Inicio del hilo");
+        int velocidad = 50;
         while (true) {
             try {
                 System.out.println("Actualmente hay " + posicionesProyectiles.size() + " proyectiles");
-                Thread.sleep(100);
+                Thread.sleep(velocidad);
                 // For para encender los proyectiles
                 for (int i = 0; i < posicionesProyectiles.size(); i++) {
                     Proyectil proyectil = posicionesProyectiles.get(i);
@@ -167,7 +190,7 @@ public class Tanque implements Runnable {
                         }
                     }
                 }
-                Thread.sleep(100);
+                Thread.sleep(velocidad);
                 // For para apagar los proyectiles
                 for (int i = 0; i < posicionesProyectiles.size(); i++) {
                     Proyectil proyectil = posicionesProyectiles.get(i);
@@ -192,6 +215,14 @@ public class Tanque implements Runnable {
 
     public Direccion getDireccionCanon() {
         return direccionCanon;
+    }
+
+    public ArrayList<JPanel> getLimitesLaterales() {
+        return limitesLaterales;
+    }
+
+    public void setLimitesLaterales(ArrayList<JPanel> limitesLaterales) {
+        this.limitesLaterales = limitesLaterales;
     }
 
 }
