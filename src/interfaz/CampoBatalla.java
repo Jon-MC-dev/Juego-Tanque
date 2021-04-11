@@ -28,7 +28,7 @@ public class CampoBatalla extends JFrame {
             panelGen = new JPanel();
             panelGen.setBackground(Color.GRAY);
             if (i <= 1000) {
-                //panelGen.add(new JLabel("" + i));
+                panelGen.add(new JLabel("" + i));
             }
             panelGen.addMouseListener(new MouseAdapter() {
                 public void mouseEntered(MouseEvent arg0) {
@@ -65,7 +65,7 @@ public class CampoBatalla extends JFrame {
         this.getContentPane().add(regilla, BorderLayout.CENTER);
         this.setSize(500, 500);
 
-        tanque.setAncla(1495);
+        tanque.setAncla(500);
         tanque.dibujarTanqueV2(Direccion.Arriba, regilla);
     }
 

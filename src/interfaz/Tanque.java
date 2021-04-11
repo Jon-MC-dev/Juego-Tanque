@@ -58,25 +58,29 @@ public class Tanque implements Runnable {
             System.out.println("Mover a la derecha");
             tankPartes.add((JPanel) regilla.getComponent(puntosAux + 2));
             tankPartes.add((JPanel) regilla.getComponent(puntosAux + 3));
-            //proyectilPosicion = (JPanel) regilla.getComponent(puntosAux + 4);
+            ultimoProyectil = new Proyectil(puntosAux + 4, false, direccion);
 
         } else if (direccion == Direccion.Izquierda) {
             System.out.println("Mover a la Izquierda");
             tankPartes.add((JPanel) regilla.getComponent(puntosAux - 2));
             tankPartes.add((JPanel) regilla.getComponent(puntosAux - 3));
+            ultimoProyectil = new Proyectil(puntosAux - 4, false, direccion);
+
         } else if (direccion == Direccion.Arriba) {
             System.out.println("Mover a la Arriba");
             tankPartes.add((JPanel) regilla.getComponent(puntosAux - 82));
             tankPartes.add((JPanel) regilla.getComponent(puntosAux - 123));
             ultimoProyectil = new Proyectil(puntosAux - 164, false, direccion);
-            posicionesProyectiles.add(ultimoProyectil);
-
         } else if (direccion == Direccion.Abajo) {
             System.out.println("Mover a la Abajo");
             tankPartes.add((JPanel) regilla.getComponent(puntosAux + 82));
             tankPartes.add((JPanel) regilla.getComponent(puntosAux + 123));
-
+            ultimoProyectil = new Proyectil(puntosAux + 164, false, direccion);
         }
+        if (posicionesProyectiles.size() <= 3) {
+            posicionesProyectiles.add(ultimoProyectil);
+        }
+
         this.setTanque(tankPartes);
         this.colorearTanque();
         this.setAncla(puntosAncla);
@@ -127,15 +131,16 @@ public class Tanque implements Runnable {
         System.out.println("Inicio del hilo");
         while (true) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(50);
+                System.out.println("Actualmente hay "+posicionesProyectiles.size()+" proyectiles");
 
                 for (int i = 0; i < posicionesProyectiles.size(); i++) {
                     Proyectil proyectil = posicionesProyectiles.get(i);
                     if (proyectil.haSidoDisparado()) {
                         try {
                             JPanel proyectilP = (JPanel) campoBatalla.getComponent(proyectil.getPuntoDeDisparo());
-                            proyectilP.setBackground(Color.BLUE);
-                            Thread.sleep(100);
+                            proyectilP.setBackground(Color.BLACK);
+                            Thread.sleep(50);
                             proyectilP.setBackground(Color.GRAY);
                             proyectil.setPuntoDeDisparo(mover(proyectil.getDireccionDisparo(), proyectil.getPuntoDeDisparo()));
                         } catch (java.lang.ArrayIndexOutOfBoundsException e) {
@@ -146,6 +151,7 @@ public class Tanque implements Runnable {
                 }
             } catch (InterruptedException e) {
                 System.out.println("Thread Interrupted");
+                System.err.print("Hilo interrumpido");
             }
         }
 

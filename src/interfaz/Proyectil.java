@@ -1,6 +1,6 @@
 package interfaz;
 
-public class Proyectil {
+public class Proyectil{
 
     private int puntoDeDisparo;
 
@@ -44,5 +44,7 @@ public class Proyectil {
     public void setDireccionDisparo(Direccion direccionDisparo) {
         this.direccionDisparo = direccionDisparo;
     }
+
+ 
 
 }
