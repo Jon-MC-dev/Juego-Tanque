@@ -1,4 +1,6 @@
-package interfaz;
+package abstractos;
+
+import abstractos.Direccion;
 
 public class Proyectil{
 

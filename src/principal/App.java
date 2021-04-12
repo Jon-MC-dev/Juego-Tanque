@@ -1,8 +1,8 @@
-package app;
+package principal;
 
 import interfaz.CampoBatalla;
-import interfaz.Direccion;
-import interfaz.Tanque;
+import abstractos.Direccion;
+import tanques.Tanque;
 
 public class App {
 

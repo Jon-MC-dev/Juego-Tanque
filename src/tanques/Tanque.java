@@ -1,5 +1,7 @@
-package interfaz;
+package tanques;
 
+import abstractos.Proyectil;
+import abstractos.Direccion;
 import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JLabel;
