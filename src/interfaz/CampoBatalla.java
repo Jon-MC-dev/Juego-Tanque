@@ -30,9 +30,9 @@ public class CampoBatalla extends JFrame {
         for (int i = 0; i < 1681; i++) {
             panelGen = new JPanel();
             panelGen.setBackground(Color.GRAY);
-            if (i <= 1000) {
-                panelGen.add(new JLabel("" + i));
-            }
+            //if (i < 1681) {
+            //    panelGen.add(new JLabel("" + i));
+            //}
             if (i % 41 == 0) {
                 panelGen.setBackground(Color.BLUE);
                 paso = i + 40;
@@ -40,6 +40,10 @@ public class CampoBatalla extends JFrame {
             }
             if (i == paso) {
                 panelGen.setBackground(Color.RED);
+                limitesLaterales.add(panelGen);
+            }
+            if ((i >= 1 && i <= 39) || (i >= 1641 && i <= 1679)) {
+                panelGen.setBackground(Color.GREEN);
                 limitesLaterales.add(panelGen);
             }
             panelGen.addMouseListener(new MouseAdapter() {

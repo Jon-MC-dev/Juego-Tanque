@@ -41,14 +41,16 @@ public class Tanque implements Runnable {
 
     public void dibujarTanqueV2(Direccion direccion, JPanel regilla, boolean mover) {
         this.campoBatalla = regilla;
-        this.direccionCanon = direccion;
         desColorarDondeElTanqueEstuvo();
         ArrayList<JPanel> tankPartes = new ArrayList<JPanel>();
         int puntosAncla = this.ancla;
         if (mover) {
-            puntosAncla = mover(direccion, this.ancla); // Aqui movemos el tanque
+            if ((direccion == direccionCanon)) {
+                puntosAncla = mover(direccion, this.ancla); // Aqui movemos el tanque
+            }
         }
-        System.out.println("Punto ancla " + puntosAncla);
+        this.direccionCanon = direccion;
+        //System.out.println("Punto ancla " + puntosAncla);
         int puntosAux = puntosAncla;
         tankPartes.add((JPanel) regilla.getComponent(puntosAux - 42));
         tankPartes.add((JPanel) regilla.getComponent(puntosAux - 41));
@@ -108,14 +110,26 @@ public class Tanque implements Runnable {
 
     private boolean machLimitesAlMoverTanque(int puntoPretendido) {
         boolean hayMach = false;
-        System.out.println("Punto pretendido [" + puntoPretendido + "]");
-        System.out.println("Cantidad de puntos limite " + limitesLaterales.size());
+        // System.out.println("Punto pretendido [" + puntoPretendido + "]");
+        // System.out.println("Cantidad de puntos limite " + limitesLaterales.size());
         for (int i = 0; i < limitesLaterales.size(); i++) {
-            if (limitesLaterales.get(i).hashCode() == tanque.get(10).hashCode()) {
-                System.out.println("A la derecha ya no deveria pasar");
+            if (limitesLaterales.get(i).hashCode() == tanque.get(10).hashCode() || limitesLaterales.get(i).hashCode() == tanque.get(9).hashCode()) {
+                //System.out.println("A la derecha ya no deveria pasar");
                 hayMach = true;
             }
 
+        }
+        return hayMach;
+    }
+
+    private boolean machLimitesProyectil(Proyectil proyectil) {
+        boolean hayMach = false;
+        // System.out.println("Cantidad de puntos limite " + limitesLaterales.size());
+        int hasPuntoDelProyectil = campoBatalla.getComponent(proyectil.getPuntoDeDisparo()).hashCode();
+        for (int i = 0; i < limitesLaterales.size() && !hayMach; i++) {
+            if (limitesLaterales.get(i).hashCode() == hasPuntoDelProyectil) {
+                hayMach = true;
+            }
         }
         return hayMach;
     }
@@ -175,7 +189,7 @@ public class Tanque implements Runnable {
         int velocidad = 50;
         while (true) {
             try {
-                System.out.println("Actualmente hay " + posicionesProyectiles.size() + " proyectiles");
+                // System.out.println("Actualmente hay " + posicionesProyectiles.size() + " proyectiles");
                 Thread.sleep(velocidad);
                 // For para encender los proyectiles
                 for (int i = 0; i < posicionesProyectiles.size(); i++) {
@@ -199,6 +213,9 @@ public class Tanque implements Runnable {
                             JPanel proyectilP = (JPanel) campoBatalla.getComponent(proyectil.getPuntoDeDisparo());
                             proyectilP.setBackground(Color.GRAY);
                             proyectil.setPuntoDeDisparo(mover(proyectil.getDireccionDisparo(), proyectil.getPuntoDeDisparo()));
+                            if (machLimitesProyectil(proyectil)) {
+                                posicionesProyectiles.remove(proyectil);
+                            }
                         } catch (java.lang.ArrayIndexOutOfBoundsException e) {
                             System.out.println("Un proyectil se perdio en el vacio");
                             posicionesProyectiles.remove(proyectil);
