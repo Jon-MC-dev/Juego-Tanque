@@ -16,6 +16,7 @@ public class Tanque implements Runnable {
     private Proyectil ultimoProyectil;
     private Direccion direccionCanon;
     private ArrayList<JPanel> limitesLaterales;
+    private ArrayList<JPanel> elementosDestruibles = new ArrayList<JPanel>();
 
     public Tanque() {
 
@@ -136,6 +137,18 @@ public class Tanque implements Runnable {
         return hayMach;
     }
 
+    private boolean machElementosDestruibles(Proyectil proyectil) {
+        boolean hayMach = false;
+        // System.out.println("Cantidad de puntos limite " + limitesLaterales.size());
+        int hasPuntoDelProyectil = campoBatalla.getComponent(proyectil.getPuntoDeDisparo()).hashCode();
+        for (int i = 0; i < elementosDestruibles.size() && !hayMach; i++) {
+            if (elementosDestruibles.get(i).hashCode() == hasPuntoDelProyectil) {
+                hayMach = true;
+            }
+        }
+        return hayMach;
+    }
+
     public void desColorarDondeElTanqueEstuvo() {
         if (tanque != null) {
             for (int i = 0; i < tanque.size(); i++) {
@@ -200,6 +213,11 @@ public class Tanque implements Runnable {
                         try {
                             JPanel proyectilP = (JPanel) campoBatalla.getComponent(proyectil.getPuntoDeDisparo());
                             proyectilP.setBackground(Color.BLACK);
+                            if (machElementosDestruibles(proyectil)) {
+                                posicionesProyectiles.remove(proyectil);
+                                proyectilP.setBackground(Color.GRAY);
+                                elementosDestruibles.remove(proyectilP);
+                            }
                         } catch (java.lang.ArrayIndexOutOfBoundsException e) {
                             System.out.println("Un proyectil se perdio en el vacio");
                             posicionesProyectiles.remove(proyectil);
@@ -218,6 +236,7 @@ public class Tanque implements Runnable {
                             if (machLimitesProyectil(proyectil)) {
                                 posicionesProyectiles.remove(proyectil);
                             }
+                            
                         } catch (java.lang.ArrayIndexOutOfBoundsException e) {
                             System.out.println("Un proyectil se perdio en el vacio");
                             posicionesProyectiles.remove(proyectil);
@@ -242,6 +261,12 @@ public class Tanque implements Runnable {
 
     public void setLimitesLaterales(ArrayList<JPanel> limitesLaterales) {
         this.limitesLaterales = limitesLaterales;
+    }
+
+    public void addElementoDestruible(ArrayList<JPanel> elementosDestruibles) {
+        for (JPanel destruible : elementosDestruibles) {
+            this.elementosDestruibles.add(destruible);
+        }
     }
 
 }

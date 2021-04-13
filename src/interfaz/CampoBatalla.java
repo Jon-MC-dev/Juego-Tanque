@@ -2,6 +2,7 @@ package interfaz;
 
 import tanques.Tanque;
 import abstractos.Direccion;
+import abstractos.Obstaculo;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -14,6 +15,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import obstaculos.Roca;
 
 public class CampoBatalla extends JFrame {
 
@@ -84,8 +86,13 @@ public class CampoBatalla extends JFrame {
         this.getContentPane().add(regilla, BorderLayout.CENTER);
         this.setSize(500, 500);
 
+        // Antes de que el tanque se dibuje tendremos que agregar una propiedad mas
+        // para que cuando el protectil y el obstaculo se encuentren el obstaculo se 
+        // destruya
+        Obstaculo obstaculo = new Roca(regilla, 140);
         tanque.setAncla(800);
         tanque.setLimitesLaterales(limitesLaterales);
+        tanque.addElementoDestruible(obstaculo.getPuntosObstaculo());
         tanque.dibujarTanqueV2(Direccion.Arriba, regilla, false);
     }
 
